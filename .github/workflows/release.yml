@@ -7,32 +7,32 @@ on:
       - "v*"
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 env:
   NODE_VERSION: 23 # 更新为与当前环境一致的Node版本
   PNPM_VERSION: 8
 
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   build-and-deploy:
     name: Build, Release and Deploy
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
-      pages: write
-      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
     steps:
-      - name: 检出代码
+      - name: Checkout 🛎️
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       # 正确的顺序：先设置PNPM，再设置Node.js
       - name: 先设置 PNPM
