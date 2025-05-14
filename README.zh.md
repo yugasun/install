@@ -5,11 +5,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/yugasun/install-sveltekit/releases">
-    <img src="https://img.shields.io/github/v/release/yugasun/install-sveltekit" alt="GitHub release">
+  <a href="https://github.com/yugasun/install/releases">
+    <img src="https://img.shields.io/github/v/release/yugasun/install" alt="GitHub release">
   </a>
   <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/yugasun/install-sveltekit" alt="License">
+    <img src="https://img.shields.io/github/license/yugasun/install" alt="License">
   </a>
 </p>
 
@@ -52,7 +52,7 @@ Install Scripts Hub 是一个集中式平台，提供各种流行开发工具和
 
 1. 克隆仓库：
 ```bash
-git clone https://github.com/yugasun/install-sveltekit.git
+git clone https://github.com/yugasun/install.git
 cd install-sveltekit
 ```
 

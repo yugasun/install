@@ -5,11 +5,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/yugasun/install-sveltekit/releases">
-    <img src="https://img.shields.io/github/v/release/yugasun/install-sveltekit" alt="GitHub release">
+  <a href="https://github.com/yugasun/install/releases">
+    <img src="https://img.shields.io/github/v/release/yugasun/install" alt="GitHub release">
   </a>
   <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/yugasun/install-sveltekit" alt="License">
+    <img src="https://img.shields.io/github/license/yugasun/install" alt="License">
   </a>
 </p>
 
@@ -52,7 +52,7 @@ This project currently includes installation scripts for:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yugasun/install-sveltekit.git
+git clone https://github.com/yugasun/install.git
 cd install-sveltekit
 ```
 
