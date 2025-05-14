@@ -1,0 +1,1 @@
+import{C as l}from"./CWDDWP1o.js";function f(s,i,r){var e=s==null?"":""+s;return e===""?null:e}function h(s,i,r,e,u,c){var a=s.__className;if(l||a!==r||a===void 0){var t=f(r);(!l||t!==s.getAttribute("class"))&&(t==null?s.removeAttribute("class"):i?s.className=t:s.setAttribute("class",t)),s.__className=r}return c}export{h as s};
