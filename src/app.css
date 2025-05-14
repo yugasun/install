@@ -1,0 +1,178 @@
+@import 'tailwindcss';
+
+/* 全局样式 */
+@layer base {
+  :root {
+    /* 基础颜色 - 浅色主题 */
+    --background: 210 40% 98%;
+    --foreground: 220 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 10% 10%;
+    --border: 220 13% 90%;
+    --input: 220 13% 90%;
+    
+    /* 主题色和强调色 */
+    --primary: 230 75% 58%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 230 75% 52%;
+    
+    --secondary: 220 14% 95%;
+    --secondary-foreground: 220 10% 36%;
+    --secondary-hover: 220 14% 91%;
+    
+    /* 功能色 */
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+    --success-bg: 142 70% 95%;
+    
+    --warning: 38 92% 50%;
+    --warning-foreground: 220 10% 10%;
+    --warning-bg: 38 92% 95%;
+    
+    --error: 0 84% 60%;
+    --error-foreground: 0 0% 100%;
+    --error-bg: 0 84% 95%;
+    
+    --info: 210 92% 45%;
+    --info-foreground: 0 0% 100%;
+    --info-bg: 210 92% 95%;
+  }
+
+  /* 深色主题 */
+  .dark {
+    --background: 220 20% 10%;
+    --foreground: 220 10% 98%;
+    --card: 220 20% 13%;
+    --card-foreground: 220 10% 98%;
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    
+    /* 主题色和强调色 - 深色模式 */
+    --primary: 230 75% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 230 75% 65%;
+    
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 220 10% 80%;
+    --secondary-hover: 220 15% 25%;
+    
+    /* 功能色 - 深色模式 */
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+    --success-bg: 142 40% 20%;
+    
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-bg: 38 50% 20%;
+    
+    --error: 0 84% 60%;
+    --error-foreground: 0 0% 100%;
+    --error-bg: 0 50% 20%;
+    
+    --info: 210 92% 45%;
+    --info-foreground: 0 0% 100%;
+    --info-bg: 210 50% 20%;
+  }
+  
+  /* 主题切换过渡效果 */
+  *, *::before, *::after {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.1s ease;
+  }
+}
+
+/* 基础元素样式 */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 链接样式 */
+a {
+  color: hsl(var(--primary));
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+a:hover {
+  opacity: 0.85;
+}
+
+/* 按钮样式 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.btn-primary:hover {
+  background-color: hsl(var(--primary-hover));
+}
+
+.btn-secondary {
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+}
+
+.btn-secondary:hover {
+  background-color: hsl(var(--secondary-hover));
+}
+
+/* 动画和过渡 */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 响应式调整 */
+.responsive-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+@media (max-width: 640px) {
+  .responsive-container {
+    padding: 1rem;
+  }
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--primary) / 0.5);
+}
