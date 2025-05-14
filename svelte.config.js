@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-static'; // 改用静态站点适配器
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -8,10 +8,19 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
-		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
-		adapter: adapter()
+		// 使用静态适配器以支持 GitHub Pages 部署
+		adapter: adapter({
+			// 默认构建输出到 build 目录
+			pages: 'build',
+			assets: 'build',
+			fallback: 'index.html',
+			precompress: false
+		}),
+		// 使用自定义域名不需要 base path
+		paths: {
+			// 如果设置了 BASE_PATH 环境变量，使用它，否则使用空字符串（根路径）
+			base: process.env.BASE_PATH || ''
+		}
 	}
 };
 
