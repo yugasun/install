@@ -36,6 +36,8 @@ const en: Translation = {
     copied: 'Copied!',
     copyFailed: 'Failed to copy',
     selectScript: 'Please select a script to see the installation command.',
+    tip: 'Click to copy the command, or use the copy button. Running this command will install <strong>{name}</strong>.',
+    clickToCopy: 'Click to copy',
   },
   detail: {
     backToList: 'Back to scripts',

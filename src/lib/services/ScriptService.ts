@@ -1,5 +1,7 @@
 import type { Script, ScriptsData } from '$lib/types';
 import { browser } from '$app/environment';
+import { get } from 'svelte/store';
+import { language } from '$lib/i18n';
 
 export class ScriptService {
   /**
@@ -7,21 +9,49 @@ export class ScriptService {
    */
   static async getScripts(): Promise<Script[]> {
     try {
-      const response = await fetch('/scripts.json');
-      const data: ScriptsData = await response.json();
+      // 获取当前语言
+      const currentLang = browser ? get(language) : 'en';
+      const scriptFileName = `/scripts.${currentLang}.json`;
       
-      // 为每个脚本添加唯一ID和安装命令
-      return data.scripts.map((script, index) => {
-        const baseUrl = browser ? window.location.origin : '';
-        const scriptUrl = script.url.startsWith('http') ? script.url : `${baseUrl}/installs/${script.url}`;
-        const command = `curl -fsSL ${scriptUrl} | bash`;
+      try {
+        // 尝试加载对应语言的脚本文件
+        const response = await fetch(scriptFileName);
+        if (!response.ok) {
+          throw new Error(`无法加载语言特定脚本文件: ${response.status}`);
+        }
+        const data: ScriptsData = await response.json();
         
-        return {
-          ...script,
-          id: `script-${index}`,
-          command: script.command || command
-        };
-      });
+        // 为每个脚本添加唯一ID和安装命令
+        return data.scripts.map((script, index) => {
+          const baseUrl = browser ? window.location.origin : '';
+          const scriptUrl = script.url.startsWith('http') ? script.url : `${baseUrl}/installs/${script.url}`;
+          const command = `curl -fsSL ${scriptUrl} | bash`;
+          
+          return {
+            ...script,
+            id: `script-${index}`,
+            command: script.command || command
+          };
+        });
+      } catch (error) {
+        console.warn(`加载语言特定脚本文件失败，尝试使用默认脚本文件:`, error);
+        
+        // 如果加载特定语言文件失败，回退到默认脚本文件
+        const fallbackResponse = await fetch('/scripts.json');
+        const fallbackData: ScriptsData = await fallbackResponse.json();
+        
+        return fallbackData.scripts.map((script, index) => {
+          const baseUrl = browser ? window.location.origin : '';
+          const scriptUrl = script.url.startsWith('http') ? script.url : `${baseUrl}/installs/${script.url}`;
+          const command = `curl -fsSL ${scriptUrl} | bash`;
+          
+          return {
+            ...script,
+            id: `script-${index}`,
+            command: script.command || command
+          };
+        });
+      }
     } catch (error) {
       console.error('加载脚本数据失败:', error);
       throw new Error('加载脚本数据失败');

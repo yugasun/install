@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import type { Script } from '$lib/types';
   import { t } from '$lib/i18n';
+  import { onMount } from 'svelte';
 
   // 接收传入的脚本信息作为属性
   export let script: Script;
@@ -28,10 +29,11 @@
 </script>
 
 <li 
-  class={`script-item flex items-center justify-between py-4 pl-4 pr-5 text-sm cursor-pointer transition-colors
+  class={`script-item flex items-center justify-between py-4 pl-4 pr-5 text-sm cursor-pointer relative
     ${isSelected 
       ? 'bg-[hsl(var(--primary)/0.1)] border-l-4 border-[hsl(var(--primary))] pl-3' 
-      : 'hover:bg-[hsl(var(--secondary)/0.5)]'}`}
+      : 'hover:bg-[hsl(var(--secondary)/0.5)] border-l-4 border-transparent'} 
+    transition-all duration-200 group`}
   on:click={handleClick}
   on:keydown={handleKeydown}
   role="button"
@@ -40,20 +42,24 @@
 >
   <div class="flex min-w-0 gap-x-4 flex-1 overflow-hidden">
     <div class="min-w-0 flex-auto">
-      <div class="text-sm font-semibold truncate">{script.name}</div>
-      <p class="mt-1 text-xs text-[hsl(var(--secondary-foreground))] line-clamp-2">{script.description || ''}</p>
+      <div class="text-sm font-semibold truncate group-hover:text-[hsl(var(--primary))] transition-colors duration-200">
+        {script.name}
+      </div>
+      <p class="mt-1 text-xs text-[hsl(var(--secondary-foreground))] line-clamp-2">
+        {script.description || ''}
+      </p>
     </div>
   </div>
   <div class="shrink-0 flex gap-2 ml-2">
     <a href={`/scripts/${script.id}`}
-       class="flex w-auto justify-center rounded-md bg-[hsl(var(--secondary))] px-3 py-1.5 text-xs font-semibold text-[hsl(var(--secondary-foreground))] shadow-sm hover:bg-[hsl(var(--secondary)/0.7)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--primary))]"
+       class="btn btn-sm btn-secondary"
        on:click={(e) => e.stopPropagation()}
        aria-label={`${$t('script.details')} - ${script.name}`}
     >
        {$t('script.details')}
     </a>
     <a href={script.sourceUrl}
-       class="flex w-auto justify-center rounded-md border border-[hsl(var(--primary))] bg-transparent px-3 py-1.5 text-xs font-semibold text-[hsl(var(--primary))] shadow-sm hover:bg-[hsl(var(--primary)/0.1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[hsl(var(--primary))]"
+       class="btn btn-sm btn-outline-primary"
        target="_blank"
        rel="noreferrer"
        on:click={(e) => e.stopPropagation()}
@@ -62,4 +68,9 @@
        {$t('script.source')}
     </a>
   </div>
+  
+  <!-- 选中状态指示器 -->
+  {#if isSelected}
+    <div class="absolute left-0 top-0 bottom-0 w-1 bg-[hsl(var(--primary))] transition-all duration-300"></div>
+  {/if}
 </li>

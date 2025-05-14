@@ -36,6 +36,8 @@ const zh: Translation = {
     copied: '已复制!',
     copyFailed: '复制失败',
     selectScript: '请选择一个脚本查看安装命令。',
+    tip: '点击命令复制，或使用复制按钮。运行此命令将安装 <strong>{name}</strong>。',
+    clickToCopy: '点击复制',
   },
   detail: {
     backToList: '返回脚本列表',

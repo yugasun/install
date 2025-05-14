@@ -2,6 +2,11 @@ import { browser } from '$app/environment';
 import { writable, derived } from 'svelte/store';
 import translations from './translations';
 
+// 变量替换的接口定义
+interface TranslationOptions {
+  values?: Record<string, string | number>;
+}
+
 // Default language
 const defaultLanguage = 'en';
 
@@ -22,10 +27,22 @@ if (browser) {
   });
 }
 
+/**
+ * 替换字符串中的变量占位符
+ * 支持 {name} 格式的占位符
+ */
+function replaceVariables(text: string, values?: Record<string, string | number>): string {
+  if (!values) return text;
+
+  return text.replace(/{([^}]+)}/g, (match, key) => {
+    return values[key] !== undefined ? String(values[key]) : match;
+  });
+}
+
 // Create a derived store for translations
 export const t = derived(language, ($language) => {
-  // Function that returns translation string
-  return (key: string): string => {
+  // Function that returns translation string with optional variable replacement
+  return (key: string, options?: TranslationOptions): string => {
     // Get the language-specific translations
     const lang = $language in translations ? $language : defaultLanguage;
     const translation = translations[lang];
@@ -58,7 +75,10 @@ export const t = derived(language, ($language) => {
       }
     }
 
-    // Return the translation or the key itself if not found
-    return typeof result === 'string' ? result : key;
+    // 获取翻译文本
+    const translatedText = typeof result === 'string' ? result : key;
+
+    // 替换变量(如果有)
+    return replaceVariables(translatedText, options?.values);
   };
 });

@@ -44,6 +44,8 @@ export interface Translation {
     copied: string;
     copyFailed: string;
     selectScript: string;
+    tip: string;
+    clickToCopy: string;
   };
   detail: {
     backToList: string;
