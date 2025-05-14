@@ -5,41 +5,66 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  # 允许手动触发工作流
   workflow_dispatch:
 
+# 设置全局环境变量
+env:
+  NODE_VERSION: 23
+  PNPM_VERSION: 8
+
 jobs:
+  setup:
+    name: 设置与检查
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: ${{ github.workflow }}-setup-${{ github.ref }}
+      cancel-in-progress: true
+    outputs:
+      cache-key: ${{ steps.store-cache-key.outputs.cache-key }}
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 先设置 PNPM
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: 设置 Node.js 环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      # 存储缓存键以供后续作业使用
+      - id: store-cache-key
+        name: 存储缓存键
+        run: echo "cache-key=${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}" >> $GITHUB_OUTPUT
+
   lint:
     name: 代码检查
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
 
+      - name: 先设置 PNPM
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
       - name: 设置 Node.js 环境
         uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-
-      - name: 设置 PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: false
-
-      - name: 获取 pnpm 缓存目录
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: 设置 pnpm 缓存
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
 
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
@@ -49,35 +74,23 @@ jobs:
 
   typecheck:
     name: 类型检查
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
 
+      - name: 先设置 PNPM
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
       - name: 设置 Node.js 环境
         uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-
-      - name: 设置 PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: false
-
-      - name: 获取 pnpm 缓存目录
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: 设置 pnpm 缓存
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
 
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
@@ -87,35 +100,23 @@ jobs:
 
   test:
     name: 测试
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
 
+      - name: 先设置 PNPM
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
       - name: 设置 Node.js 环境
         uses: actions/setup-node@v4
         with:
-          node-version: 23
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-
-      - name: 设置 PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-          run_install: false
-
-      - name: 获取 pnpm 缓存目录
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: 设置 pnpm 缓存
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
 
       - name: 安装依赖
         run: pnpm install --frozen-lockfile

@@ -4,20 +4,19 @@ on:
   push:
     branches: [main]
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
 
-# 为所有作业设置共同环境
 env:
-  NODE_VERSION: 23
+  NODE_VERSION: 23 # 更新为与当前环境一致的Node版本
   PNPM_VERSION: 8
 
 jobs:
   build-and-deploy:
     name: Build, Release and Deploy
     runs-on: ubuntu-latest
-    timeout-minutes: 15 # 添加超时限制
-    concurrency: # 避免同时运行多个工作流程导致的冲突
+    timeout-minutes: 15
+    concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     permissions:
@@ -35,72 +34,31 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 设置 PNPM
-        uses: pnpm/action-setup@v3 # 更新到最新版本
+      # 正确的顺序：先设置PNPM，再设置Node.js
+      - name: 先设置 PNPM
+        uses: pnpm/action-setup@v3
         with:
           version: ${{ env.PNPM_VERSION }}
+          run_install: false
 
       - name: 设置 Node.js 环境
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
-      # 使用新版缓存策略，简化缓存设置
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
-        
-      # 构建一次，供后续步骤使用
+
       - name: 构建应用
         run: pnpm run build
         env:
-          BASE_PATH: ''
+          BASE_PATH: ""
           NODE_ENV: production
-      
-      # 使用构建产物缓存，加速部署
-      - name: 缓存构建产物
-        uses: actions/cache/save@v4
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          path: build
-          key: ${{ runner.os }}-build-${{ github.sha }}
+          folder: build # The folder the action should deploy.
+          token: ${{ secrets.GH_TOKEN }} # The token to use for authentication.
 
-      # 仅在标签发布时创建GitHub Release
-      - name: 创建 GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2 # 更新版本
-        with:
-          files: |
-            build/**
-            LICENSE
-            README.md
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # 设置GitHub Pages并部署
-      - name: 设置 Pages
-        uses: actions/configure-pages@v4 # 更新版本
-
-      - name: 上传构建产物
-        uses: actions/upload-pages-artifact@v3 # 更新版本
-        with:
-          path: 'build/'
-
-      - name: 部署到 GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4 # 更新版本
-
-      # 添加工作流完成状态通知
-      - name: 工作流状态通知
-        if: always()
-        uses: ravsamhq/notify-slack-action@v2
-        with:
-          status: ${{ job.status }}
-          notification_title: "工作流 {workflow} {status_message}"
-          message_format: "{emoji} *{workflow}* {status_message} in <{repo_url}|{repo}>"
-          footer: "执行者：<{sender_url}|{sender}> • 提交：<{commit_url}|{commit_sha}>"
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }} # 需要在仓库设置中添加此密钥
-        continue-on-error: true # 即使通知失败，也不影响工作流的整体状态
