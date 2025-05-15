@@ -1,13 +1,14 @@
 # Install Scripts Hub
 
 <p align="center">
+  <img src="static/favicon.png" alt="Install Scripts Hub" width="64" height="64">
+</p>
+
+<p align="center">
   一站式安装脚本集合平台 | One-stop installation script collection platform
 </p>
 
 <p align="center">
-  <a href="https://github.com/yugasun/install/releases">
-    <img src="https://img.shields.io/github/v/release/yugasun/install" alt="GitHub release">
-  </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/github/license/yugasun/install" alt="License">
   </a>
